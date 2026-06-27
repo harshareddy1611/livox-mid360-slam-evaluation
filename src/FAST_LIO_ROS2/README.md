@@ -31,6 +31,16 @@ Dataset statistics:
 - Ground-truth path length: 35.316 m
 - Estimated path length: 32.288 m
 
+## Trajectory Comparison
+
+### XY Trajectory (FAST-LIO vs Ground Truth)
+
+![XY Trajectory](../../results/fastlio_mid360_indooroffice1/aligned_xy_trajectories.png)
+
+### XZ Trajectory (FAST-LIO vs Ground Truth)
+
+![XZ Trajectory](../../results/fastlio_mid360_indooroffice1/aligned_xz_trajectories.png)
+
 ## Evaluation Pipeline
 
 ```text
