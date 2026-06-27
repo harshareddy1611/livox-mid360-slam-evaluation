@@ -58,20 +58,6 @@ EVO Evaluation
         └── RPE (RMSE: 11.3 cm)
 ```
 
-## Repository Structure
-
-```text
-results/
-└── fastlio_mid360_indooroffice1/
-    ├── README.md
-    ├── aligned_xy.pdf
-    ├── aligned_xz.pdf
-    └── aligned_3d.pdf
-
-docs/
-└── pipeline.md
-```
-
 ## Key Modifications
 
 - Removed dependency on `livox_ros_driver2::CustomMsg` for MID360 evaluation
