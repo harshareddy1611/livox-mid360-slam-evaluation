@@ -1,0 +1,22 @@
+# ROS2 build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+
+# Bag files and databases
+*.bag
+*.db3
+*.db3-shm
+*.db3-wal
+
+# Large datasets
+Downloads/
+datasets/
