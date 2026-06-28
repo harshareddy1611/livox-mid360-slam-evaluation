@@ -9,12 +9,6 @@ Evaluation is performed on **Livox MID360 Indoor Office dataset** using ROS2 and
 
 ---
 
-## Main Result: Trajectory Comparison
-
-![FAST-LIO vs GLIM Comparison](results/comparison/fastlio_glim_xy.png)
-
----
-
 # Objective
 
 The goal of this work is to:
