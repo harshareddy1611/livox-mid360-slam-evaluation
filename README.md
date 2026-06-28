@@ -91,6 +91,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 - FAST-LIO: https://github.com/hku-mars/FAST_LIO
 - GLIM: https://github.com/koide3/glim
 - EVO: https://github.com/MichaelGrupp/evo
+- Dataset: https://github.com/TIERS/multi_modal_lidar_dataset
 
 ---
 
