@@ -1,4 +1,4 @@
-# 📊 SLAM Benchmark: FAST-LIO vs GLIM (Livox MID360)
+# SLAM Benchmark: FAST-LIO vs GLIM (Livox MID360)
 
 This repository presents a **clean, reproducible benchmark comparison** between two LiDAR-Inertial SLAM systems:
 
@@ -9,7 +9,13 @@ Evaluation is performed on **Livox MID360 Indoor Office dataset** using ROS2 and
 
 ---
 
-# 🎯 Objective
+## Main Result: Trajectory Comparison
+
+![FAST-LIO vs GLIM Comparison](results/comparison/fastlio_glim_xy.png)
+
+---
+
+# Objective
 
 The goal of this work is to:
 
@@ -20,7 +26,7 @@ The goal of this work is to:
 
 ---
 
-# 📊 Main Result (Trajectory Comparison)
+# Main Result (Trajectory Comparison)
 
 ### XY Plane Trajectory Overlay
 
@@ -30,7 +36,7 @@ This is the final aligned trajectory comparison:
 
 ---
 
-# 📈 Quantitative Evaluation
+# Quantitative Evaluation
 
 Metrics computed using EVO:
 
@@ -41,13 +47,13 @@ Metrics computed using EVO:
 
 ---
 
-# 🔧 System Setup & Modifications
+# System Setup & Modifications
 
 To enable both systems on **Livox MID360**, the following adaptations were required:
 
 ---
 
-## ⚙️ FAST-LIO Modifications
+## FAST-LIO Modifications
 
 - Adjusted IMU scaling for Livox MID360 sensor
 - Updated ROS2 topic mapping:
@@ -58,7 +64,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 
 ---
 
-## ⚙️ GLIM Modifications
+## GLIM Modifications
 
 - Configured correct sensor topics in ROS2
 - Fixed odometry module loading issues
@@ -68,7 +74,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 
 ---
 
-# 📌 Key Findings
+# Key Findings
 
 - **GLIM achieves lower global drift (better APE score)**
 - FAST-LIO shows stable short-term tracking performance
@@ -77,7 +83,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 
 ---
 
-# 🧪 Tools Used
+# Tools Used
 
 - ROS2 Humble
 - EVO trajectory evaluation toolkit
@@ -86,7 +92,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 
 ---
 
-# 📚 References
+# References
 
 - FAST-LIO: https://github.com/hku-mars/FAST_LIO
 - GLIM: https://github.com/koide3/glim
@@ -94,7 +100,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 
 ---
 
-# 🧠 Notes
+# Notes
 
 - All results are reproducible using ROS2 bags
 - Trajectories are aligned using Umeyama SE(3) alignment
@@ -102,7 +108,7 @@ To enable both systems on **Livox MID360**, the following adaptations were requi
 
 ---
 
-# 🚀 Summary
+# Summary
 
 This repository serves as a **SLAM benchmarking study**, focusing on:
 
