@@ -117,7 +117,8 @@ See [`docs/setup.md`](docs/setup.md) for build instructions and
 - Indoor/LiDAR clock offset handled per-method in evaluation.
 - Outdoor GNSS-RTK coordinates converted to local ENU via `scripts/convert_gnss_to_enu.py`.
 - GLIM runs CPU-only on dev machine; GPU mode on Orin NX expected to improve results.
-- DLIO publishes odometry at IMU rate (~200 Hz) vs LiDAR rate (10 Hz) for other methods. A 3-second IMU calibration period at startup produces zero-position poses; these are trimmed before evaluation. Post-initialization accuracy is comparable to FAST-LIO2.
+- **DLIO startup trimming:** DLIO performs a 3-second IMU calibration at node startup before processing the first scan. During this period it publishes poses at the origin (0,0,0), which artificially inflates APE RMSE (0.144m → 0.075m on IndoorOffice1 when trimmed). These zero-position startup poses are stripped before evaluation using `scripts/trim_dlio.py`. On live hardware (Orin NX), the calibration happens before the robot starts moving so this artifact does not occur.
+- DLIO publishes odometry at IMU rate (~200 Hz) vs LiDAR rate (10 Hz) for other methods.
 
 ## Platform
 
