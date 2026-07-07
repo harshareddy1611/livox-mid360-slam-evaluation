@@ -12,9 +12,11 @@ APE RMSE (translation, meters) across three sequences, Mid-360 sensor:
 | Method | IndoorOffice1 | IndoorOffice2 | OutdoorRoad | Average |
 |--------|:---:|:---:|:---:|:---:|
 | KISS-ICP | 0.124 | 0.079 | 0.089 | 0.097 |
-| DLIO | 0.144 | 0.107 | 0.104 | 0.118 |
+| DLIO | 0.144 | 0.107 | N/A* | – |
 | FAST-LIO2 | 0.060 | 0.049 | 0.091 | **0.067** |
 | **GLIM** | **0.025** | 0.096 | 0.087 | 0.069 |
+
+> *DLIO outdoor trajectory degenerate (duplicate poses); under investigation.
 
 Ground truth: OptiTrack/VRPN mocap (indoor), GNSS-RTK converted to local ENU (outdoor).
 SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
