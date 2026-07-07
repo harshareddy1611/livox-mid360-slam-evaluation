@@ -12,11 +12,9 @@ APE RMSE (translation, meters) across three sequences, Mid-360 sensor:
 | Method | IndoorOffice1 | IndoorOffice2 | OutdoorRoad | Average |
 |--------|:---:|:---:|:---:|:---:|
 | KISS-ICP | 0.124 | 0.079 | 0.089 | 0.097 |
-| DLIO | 0.144 | 0.107 | N/A* | – |
+| DLIO | 0.075 | 0.073 | 0.090 | 0.079 |
 | FAST-LIO2 | 0.060 | 0.049 | 0.091 | **0.067** |
 | **GLIM** | **0.025** | 0.096 | 0.087 | 0.069 |
-
-> *DLIO outdoor trajectory degenerate (duplicate poses); under investigation.
 
 Ground truth: OptiTrack/VRPN mocap (indoor), GNSS-RTK converted to local ENU (outdoor).
 SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
@@ -119,7 +117,7 @@ See [`docs/setup.md`](docs/setup.md) for build instructions and
 - Indoor/LiDAR clock offset handled per-method in evaluation.
 - Outdoor GNSS-RTK coordinates converted to local ENU via `scripts/convert_gnss_to_enu.py`.
 - GLIM runs CPU-only on dev machine; GPU mode on Orin NX expected to improve results.
-- DLIO publishes odometry at IMU rate (~200 Hz) vs LiDAR rate (10 Hz) for other methods.
+- DLIO publishes odometry at IMU rate (~200 Hz) vs LiDAR rate (10 Hz) for other methods. A 3-second IMU calibration period at startup produces zero-position poses; these are trimmed before evaluation. Post-initialization accuracy is comparable to FAST-LIO2.
 
 ## Platform
 
