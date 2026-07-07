@@ -12,6 +12,7 @@ APE RMSE (translation, meters) across three sequences, Mid-360 sensor:
 | Method | IndoorOffice1 | IndoorOffice2 | OutdoorRoad | Average |
 |--------|:---:|:---:|:---:|:---:|
 | KISS-ICP | 0.124 | 0.079 | 0.089 | 0.097 |
+| DLIO | 0.144 | 0.107 | 0.104 | 0.118 |
 | FAST-LIO2 | 0.060 | 0.049 | 0.091 | **0.067** |
 | **GLIM** | **0.025** | 0.096 | 0.087 | 0.069 |
 
@@ -21,9 +22,10 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 ## Key findings
 
 - **Indoors**: GLIM's loop closure gives a clear advantage (0.025 m vs 0.060 m FAST-LIO2 vs 0.124 m KISS-ICP)
-- **Outdoors**: all three methods converge to ~0.087–0.091 m — rich outdoor geometry makes LiDAR-only ICP competitive with LIO
-- **FAST-LIO2 is most consistent** across environments (0.049–0.091 m range vs larger variance in others)
-- **GLIM's advantage is environment-dependent**: significant indoors with loop closure, marginal outdoors on CPU without GPU acceleration
+- **Outdoors**: all methods converge to ~0.087–0.104 m — rich outdoor geometry makes LiDAR-only ICP competitive with LIO
+- **FAST-LIO2 is most consistent** across environments (0.049–0.091 m)
+- **DLIO performs similarly to KISS-ICP** on slow quadruped motion — continuous-time advantage not significant at low speeds; expected to improve on aggressive UAV motion on the Orin NX
+- **GLIM's advantage is environment-dependent**: significant indoors with loop closure, marginal outdoors on CPU
 
 ## Trajectory plots
 
@@ -63,31 +65,32 @@ See [`data/README.md`](data/README.md) for download and conversion steps.
 
 ## Methods
 
-- **[KISS-ICP](https://github.com/PRBonn/kiss-icp)** — point-to-point ICP odometry, LiDAR-only. Robust baseline.
+- **[KISS-ICP](https://github.com/PRBonn/kiss-icp)** — LiDAR-only odometry. Robust baseline.
+- **[DLIO](https://github.com/vectr-ucla/direct_lidar_inertial_odometry)** — continuous-time LiDAR-inertial odometry (ICRA 2023). 6-axis IMU compatible.
 - **[FAST-LIO2](https://github.com/Ericsii/FAST_LIO_ROS2)** — tightly-coupled LiDAR-inertial odometry (iEKF).
 - **[GLIM](https://github.com/koide3/glim)** — LiDAR-inertial SLAM with factor-graph optimization and loop closure. CPU build on dev machine; GPU on Orin NX.
 
 ## Methods attempted but incompatible
 
-**LIO-SAM** requires a 9-axis IMU (magnetometer + orientation output). The Livox Mid-360's
-built-in IMU is 6-axis (accelerometer + gyroscope only), causing complete divergence
-(APE RMSE ~328 m). For UAV platforms using the Mid-360, FAST-LIO2 or GLIM are the
-appropriate LiDAR-inertial methods.
+**LIO-SAM** requires a 9-axis IMU. The Livox Mid-360's built-in IMU is 6-axis only,
+causing complete divergence (APE RMSE ~328 m). FAST-LIO2 or GLIM are the appropriate
+LiDAR-inertial methods for the Mid-360.
 
 ## Reproducing
 
 ```bash
 pip install kiss-icp evo rosbags
 
-# indoor sequences
-python3 scripts/extract_gt.py <bag> --topic /vrpn_client_node/unitree_b1/pose \
-        --out results/gt.tum
+# indoor
+python3 scripts/extract_gt.py <bag> \
+  --topic /vrpn_client_node/unitree_b1/pose --out results/gt.tum
 
-# outdoor sequence (convert GNSS lat/lon/alt → local ENU first)
+# outdoor (GNSS -> ENU)
 python3 scripts/extract_gt.py <bag> --topic /gnss_pose --out results/gt_raw.tum
 python3 scripts/convert_gnss_to_enu.py results/gt_raw.tum --out results/gt_enu.tum
 
 bash scripts/run_kiss_icp.sh <bag>
+bash scripts/run_dlio.sh <bag>
 bash scripts/run_fastlio2.sh <bag>
 bash scripts/run_glim.sh <bag>
 bash scripts/evaluate.sh
@@ -100,8 +103,9 @@ See [`docs/setup.md`](docs/setup.md) for build instructions and
 
 - Per-point timestamps lost in initial ROS1→ROS2 conversion; `rosbags-convert` recovers them.
 - Indoor/LiDAR clock offset handled per-method in evaluation.
-- Outdoor GNSS-RTK coordinates are in lat/lon/alt (degrees); converted to local ENU via `scripts/convert_gnss_to_enu.py`.
-- GLIM runs CPU-only on dev machine (`-DBUILD_WITH_CUDA=OFF`); GPU mode on Orin NX expected to improve results.
+- Outdoor GNSS-RTK coordinates converted to local ENU via `scripts/convert_gnss_to_enu.py`.
+- GLIM runs CPU-only on dev machine; GPU mode on Orin NX expected to improve results.
+- DLIO publishes odometry at IMU rate (~200 Hz) vs LiDAR rate (10 Hz) for other methods.
 
 ## Platform
 
