@@ -1,0 +1,74 @@
+lio_sam:
+  ros__parameters:
+
+    pointCloudTopic: "/mid360/livox/lidar"
+    imuTopic: "/mid360/livox/imu"
+    odomTopic: "odometry/imu"
+    gpsTopic: "odometry/gpsz"
+
+    lidarFrame: "lidar_link"
+    baselinkFrame: "base_link"
+    odometryFrame: "odom"
+    mapFrame: "map"
+
+    useImuHeadingInitialization: false
+    useGpsElevation: false
+    gpsCovThreshold: 2.0
+    poseCovThreshold: 25.0
+
+    savePCD: false
+    savePCDDirectory: "/Downloads/LOAM/"
+
+    sensor: livox
+    N_SCAN: 4
+    Horizon_SCAN: 4000
+    downsampleRate: 1
+    lidarMinRange: 0.5
+    lidarMaxRange: 60.0
+
+    imuAccNoise: 0.1
+    imuGyrNoise: 0.1
+    imuAccBiasN: 0.0001
+    imuGyrBiasN: 0.0001
+    imuGravity: 9.80511
+    imuRPYWeight: 0.01
+
+    extrinsicTrans: [-0.011, -0.02329, 0.04412]
+    extrinsicRot:   [1.0, 0.0, 0.0,
+                     0.0, 1.0, 0.0,
+                     0.0, 0.0, 1.0]
+    extrinsicRPY:   [1.0, 0.0, 0.0,
+                     0.0, 1.0, 0.0,
+                     0.0, 0.0, 1.0]
+
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+
+    odometrySurfLeafSize: 0.2
+    mappingCornerLeafSize: 0.1
+    mappingSurfLeafSize: 0.2
+
+    z_tollerance: 1000.0
+    rotation_tollerance: 1000.0
+
+    numberOfCores: 8
+    mappingProcessInterval: 0.15
+
+    surroundingkeyframeAddingDistThreshold: 0.5
+    surroundingkeyframeAddingAngleThreshold: 0.2
+    surroundingKeyframeDensity: 1.0
+    surroundingKeyframeSearchRadius: 50.0
+
+    loopClosureEnableFlag: true
+    loopClosureFrequency: 1.0
+    surroundingKeyframeSize: 50
+    historyKeyframeSearchRadius: 15.0
+    historyKeyframeSearchTimeDiff: 30.0
+    historyKeyframeSearchNum: 25
+    historyKeyframeFitnessScore: 0.3
+
+    globalMapVisualizationSearchRadius: 1000.0
+    globalMapVisualizationPoseDensity: 10.0
+    globalMapVisualizationLeafSize: 1.0

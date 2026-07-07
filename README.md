@@ -87,3 +87,7 @@ Target: Jetson Orin NX, Ubuntu 22.04, ROS 2 Humble, Livox Mid-360.
 ## Author
 
 Harsha Reddy
+
+## Methods attempted but incompatible
+
+**LIO-SAM** was tested but is incompatible with the Livox Mid-360's built-in 6-axis IMU. LIO-SAM requires a 9-axis IMU (accelerometer + gyroscope + magnetometer) to initialize roll, pitch, and yaw. The Mid-360's IMU provides only accelerometer and gyroscope data (no magnetometer/orientation). With a patched identity-quaternion fallback, LIO-SAM runs but produces completely diverged trajectories (APE RMSE ~328 m vs 0.025–0.124 m for compatible methods). This is consistent with the authors' own documentation stating LIO-SAM does not work with 6-axis IMUs. For UAV platforms using the Livox Mid-360, FAST-LIO2 or GLIM are the appropriate LiDAR-inertial methods.
