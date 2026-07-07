@@ -1,63 +1,92 @@
 # Livox Mid-360 SLAM Evaluation
 
 Benchmarking LiDAR and LiDAR-inertial odometry/SLAM methods on the
-[TIERS LiDAR dataset](https://github.com/TIERS/tiers-lidars-dataset),
-evaluated against motion-capture ground truth. Targets a **Jetson Orin NX +
-Livox Mid-360** UAV navigation platform.
+[TIERS Multi-Modal LiDAR Dataset](https://github.com/TIERS/multi_modal_lidar_dataset),
+evaluated against motion-capture (indoor) and GNSS-RTK (outdoor) ground truth.
+Targets a **Jetson Orin NX + Livox Mid-360** UAV navigation platform.
 
 ## Results
 
-APE (translation) on `IndoorOffice1`, Mid-360, vs OptiTrack/VRPN ground truth
-(SE(3) Umeyama alignment):
+APE RMSE (translation, meters) across three sequences, Mid-360 sensor:
 
-| Method | Type | APE RMSE (m) | Mean (m) | Median (m) | Max (m) |
-|--------|------|:---:|:---:|:---:|:---:|
-| KISS-ICP | LiDAR-only odometry | 0.124 | 0.102 | 0.099 | 0.266 |
-| FAST-LIO2 | LiDAR-inertial (iEKF) | 0.060 | 0.053 | 0.053 | 0.140 |
-| **GLIM** | **LiDAR-inertial SLAM** | **0.025** | **0.023** | **0.021** | **0.101** |
+| Method | IndoorOffice1 | IndoorOffice2 | OutdoorRoad | Average |
+|--------|:---:|:---:|:---:|:---:|
+| KISS-ICP | 0.124 | 0.079 | 0.089 | 0.097 |
+| FAST-LIO2 | 0.060 | 0.049 | 0.091 | **0.067** |
+| **GLIM** | **0.025** | 0.096 | 0.087 | 0.069 |
 
-GLIM's factor-graph optimization with loop closure achieves **5× lower error**
-than LiDAR-only KISS-ICP. IMU fusion (FAST-LIO2) halves the LiDAR-only error.
-GLIM's full SLAM pipeline further halves FAST-LIO2's error.
+Ground truth: OptiTrack/VRPN mocap (indoor), GNSS-RTK converted to local ENU (outdoor).
+SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 
-## Trajectory comparison
+## Key findings
 
-![All methods vs ground truth](results/comparison/all_methods_xy_trajectories.png)
+- **Indoors**: GLIM's loop closure gives a clear advantage (0.025 m vs 0.060 m FAST-LIO2 vs 0.124 m KISS-ICP)
+- **Outdoors**: all three methods converge to ~0.087–0.091 m — rich outdoor geometry makes LiDAR-only ICP competitive with LIO
+- **FAST-LIO2 is most consistent** across environments (0.049–0.091 m range vs larger variance in others)
+- **GLIM's advantage is environment-dependent**: significant indoors with loop closure, marginal outdoors on CPU without GPU acceleration
 
+## Trajectory plots
+
+### IndoorOffice1
 | KISS-ICP | FAST-LIO2 | GLIM |
 |:---:|:---:|:---:|
 | ![](results/kiss_icp/ape_map.png) | ![](results/fastlio2/ape_map.png) | ![](results/glim/ape_map.png) |
 
+![IndoorOffice1 comparison](results/comparison/all_methods_xy_trajectories.png)
+
+### IndoorOffice2
+| KISS-ICP | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|
+| ![](results/indooroffice2/kiss_icp/ape_map_map.png) | ![](results/indooroffice2/fastlio2/ape_map_map.png) | ![](results/indooroffice2/glim/ape_full_map_map.png) |
+
+![IndoorOffice2 comparison](results/indooroffice2/comparison_xy_trajectories.png)
+
+### OutdoorRoad
+| KISS-ICP | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|
+| ![](results/outdoorroad/kiss_icp/ape_map_map.png) | ![](results/outdoorroad/fastlio2/ape_map_map.png) | ![](results/outdoorroad/glim/ape_map_map.png) |
+
+![OutdoorRoad comparison](results/outdoorroad/comparison_xy_trajectories.png)
+
 ## Dataset
 
-`IndoorOffice1` from the TIERS dataset: Unitree B1 quadruped with Livox Avia,
-Mid-360, and Ouster LiDARs + IMUs, with OptiTrack motion capture (VRPN).
-This study uses the **Mid-360** streams to match the target UAV hardware.
+TIERS Multi-Modal LiDAR Dataset sequences used:
 
-| Topic | Type | Role |
-|-------|------|------|
-| `/mid360/livox/lidar` | PointCloud2 | LiDAR input |
-| `/mid360/livox/imu` | Imu | IMU input |
-| `/vrpn_client_node/unitree_b1/pose` | PoseStamped | Ground truth |
+| Sequence | Environment | Duration | Ground truth |
+|----------|-------------|----------|--------------|
+| IndoorOffice1 | Indoor office | 66 s | OptiTrack mocap |
+| IndoorOffice2 | Indoor office | 95 s | OptiTrack mocap |
+| OutdoorRoad (cut0) | Outdoor road | 66 s | GNSS-RTK → local ENU |
 
+All sequences use the **Mid-360** streams (`/mid360/livox/lidar`, `/mid360/livox/imu`).
 See [`data/README.md`](data/README.md) for download and conversion steps.
 
 ## Methods
 
-- **[KISS-ICP](https://github.com/PRBonn/kiss-icp)** — point-to-point ICP
-  odometry, LiDAR-only, no IMU. Robust baseline.
-- **[FAST-LIO2](https://github.com/Ericsii/FAST_LIO_ROS2)** — tightly-coupled
-  LiDAR-inertial odometry via an iterated error-state Kalman filter.
-- **[GLIM](https://github.com/koide3/glim)** — LiDAR-inertial SLAM with
-  GPU-accelerated factor-graph optimization and loop closure (CPU build on
-  dev machine; GPU on Orin NX).
+- **[KISS-ICP](https://github.com/PRBonn/kiss-icp)** — point-to-point ICP odometry, LiDAR-only. Robust baseline.
+- **[FAST-LIO2](https://github.com/Ericsii/FAST_LIO_ROS2)** — tightly-coupled LiDAR-inertial odometry (iEKF).
+- **[GLIM](https://github.com/koide3/glim)** — LiDAR-inertial SLAM with factor-graph optimization and loop closure. CPU build on dev machine; GPU on Orin NX.
+
+## Methods attempted but incompatible
+
+**LIO-SAM** requires a 9-axis IMU (magnetometer + orientation output). The Livox Mid-360's
+built-in IMU is 6-axis (accelerometer + gyroscope only), causing complete divergence
+(APE RMSE ~328 m). For UAV platforms using the Mid-360, FAST-LIO2 or GLIM are the
+appropriate LiDAR-inertial methods.
 
 ## Reproducing
 
 ```bash
 pip install kiss-icp evo rosbags
 
-python3 scripts/extract_gt.py <bag> --out results/gt_mid360.tum
+# indoor sequences
+python3 scripts/extract_gt.py <bag> --topic /vrpn_client_node/unitree_b1/pose \
+        --out results/gt.tum
+
+# outdoor sequence (convert GNSS lat/lon/alt → local ENU first)
+python3 scripts/extract_gt.py <bag> --topic /gnss_pose --out results/gt_raw.tum
+python3 scripts/convert_gnss_to_enu.py results/gt_raw.tum --out results/gt_enu.tum
+
 bash scripts/run_kiss_icp.sh <bag>
 bash scripts/run_fastlio2.sh <bag>
 bash scripts/run_glim.sh <bag>
@@ -69,15 +98,10 @@ See [`docs/setup.md`](docs/setup.md) for build instructions and
 
 ## Evaluation notes
 
-- **Point timestamps:** initial ROS1→ROS2 conversion dropped per-point
-  `timestamp` and `line` fields; reconverting with `rosbags-convert` recovered
-  them, enabling motion compensation in all three methods.
-- **Clock alignment:** mocap and LiDAR streams use different time bases;
-  handled per-method in evaluation (KISS-ICP needs explicit offset;
-  FAST-LIO2 and GLIM carry correct header stamps).
-- **GLIM on CPU:** dev machine has Intel iGPU only; GLIM runs CPU mode
-  (`-DBUILD_WITH_CUDA=OFF`). Orin NX target uses GPU mode for real-time
-  operation.
+- Per-point timestamps lost in initial ROS1→ROS2 conversion; `rosbags-convert` recovers them.
+- Indoor/LiDAR clock offset handled per-method in evaluation.
+- Outdoor GNSS-RTK coordinates are in lat/lon/alt (degrees); converted to local ENU via `scripts/convert_gnss_to_enu.py`.
+- GLIM runs CPU-only on dev machine (`-DBUILD_WITH_CUDA=OFF`); GPU mode on Orin NX expected to improve results.
 
 ## Platform
 
@@ -87,7 +111,3 @@ Target: Jetson Orin NX, Ubuntu 22.04, ROS 2 Humble, Livox Mid-360.
 ## Author
 
 Harsha Reddy
-
-## Methods attempted but incompatible
-
-**LIO-SAM** was tested but is incompatible with the Livox Mid-360's built-in 6-axis IMU. LIO-SAM requires a 9-axis IMU (accelerometer + gyroscope + magnetometer) to initialize roll, pitch, and yaw. The Mid-360's IMU provides only accelerometer and gyroscope data (no magnetometer/orientation). With a patched identity-quaternion fallback, LIO-SAM runs but produces completely diverged trajectories (APE RMSE ~328 m vs 0.025–0.124 m for compatible methods). This is consistent with the authors' own documentation stating LIO-SAM does not work with 6-axis IMUs. For UAV platforms using the Livox Mid-360, FAST-LIO2 or GLIM are the appropriate LiDAR-inertial methods.
