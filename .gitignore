@@ -1,0 +1,25 @@
+# Build artifacts
+slam_ws/
+build/
+install/
+log/
+
+# Regenerable eval artifacts
+*.tum
+*.npy
+*.zip
+results/**/kiss_raw/
+results/**/fastlio_odom/
+
+# Raw data — never commit bags
+*.db3
+*.bag
+metadata.yaml
+
+# Python
+__pycache__/
+*.pyc
+
+# Keep summary outputs
+!results/**/*.png
+!results/**/*.csv
