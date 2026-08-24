@@ -11,14 +11,26 @@ Orin NX, the platform's actual target hardware.
 
 APE RMSE (translation, meters) across 7 clean sequences:
 
-<!-- TODO: fill in once scripts/run_drone_batch.sh completes -->
-
 | Method | batch1_00 | batch1_07 | batch2_01 | batch2_02 | batch2_03 | batch2_04 | batch2_05 | Average |
 |--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| KISS-ICP | | | | | | | | |
-| DLIO | | | | | | | | |
-| FAST-LIO2 | | | | | | | | |
-| GLIM (GPU) | | | | | | | | |
+| KISS-ICP | 0.046 | 0.426 | 0.086 | 0.067 | 0.043 | 0.094 | 0.098 | 0.123 |
+| DLIO | 0.083 | 0.111 | 0.087 | 0.099 | 0.096 | 0.089 | 0.099 | 0.095 |
+| FAST-LIO2 | 0.086 | 0.177 | 0.111 | 0.087 | 0.081 | 0.131 | 0.137 | 0.116 |
+| **GLIM (GPU)** | **0.030** | **0.031** | **0.056** | **0.056** | **0.023** | **0.036** | **0.040** | **0.039** |
+
+Ground truth: Pixhawk EKF pose (`/mavros/local_position/pose`, VICON-fused).
+SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
+
+## Key findings
+
+- **GLIM (GPU) wins decisively on every sequence** — averaging 0.039m vs 0.095-0.123m
+  for the other three methods, driven by loop closure against the small, revisitable
+  VICON arena.
+- **KISS-ICP is the most volatile**: best-in-class on some sequences (0.043-0.098m)
+  but spikes to 0.426m on batch1_07 — LiDAR-only ICP has no inertial backstop against
+  faster/more aggressive drone motion.
+- **DLIO and FAST-LIO2 perform similarly** (0.095m vs 0.116m average), both far more
+  consistent than KISS-ICP across sequences.
 
 ## Environment
 
