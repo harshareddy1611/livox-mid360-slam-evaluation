@@ -3,7 +3,9 @@
 set -euo pipefail
 
 BAG="${1:-$HOME/Downloads/IndoorOffice1_ros2_v2}"
-OUT_DIR="results/indooroffice1/dlio"
+LIDAR_TOPIC="${2:-/mid360/livox/lidar}"
+IMU_TOPIC="${3:-/mid360/livox/imu}"
+OUT_DIR="${4:-results/indooroffice1/dlio}"
 [ "$BAG" = *"IndoorOffice2"* ] && OUT_DIR="results/indooroffice2/dlio"
 [ "$BAG" = *"OutdoorRoad"* ] && OUT_DIR="results/outdoorroad/dlio"
 mkdir -p "$OUT_DIR"
@@ -11,12 +13,12 @@ mkdir -p "$OUT_DIR"
 source /opt/ros/humble/setup.bash
 source "$HOME/slam_ws/install/setup.bash"
 
-echo ">>> Launch DLIO in background"
+echo ">>> Launch DLIO in background (lidar=$LIDAR_TOPIC imu=$IMU_TOPIC)"
 ros2 launch direct_lidar_inertial_odometry dlio.launch.py \
-  pointcloud_topic:=/mid360/livox/lidar \
-  imu_topic:=/mid360/livox/imu \
+  pointcloud_topic:="$LIDAR_TOPIC" \
+  imu_topic:="$IMU_TOPIC" \
   rviz:=false \
-  params_filepath:="$HOME/lidar-uav-nav/configs/dlio/mid360.yaml" &
+  params_filepath:="$HOME/livox-mid360-slam-evaluation/configs/dlio/mid360.yaml" &
 DLIO_PID=$!
 sleep 5
 
