@@ -22,9 +22,9 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 ## Key findings
 
 - **Indoors**: GLIM's loop closure gives a clear advantage (0.025 m vs 0.060 m FAST-LIO2 vs 0.124 m KISS-ICP)
-- **Outdoors**: all methods converge to ~0.087–0.104 m — rich outdoor geometry makes LiDAR-only ICP competitive with LIO
+- **Outdoors**: all methods converge to ~0.087–0.104 m, rich outdoor geometry makes LiDAR-only ICP competitive with LIO
 - **FAST-LIO2 is most consistent** across environments (0.049–0.091 m)
-- **DLIO performs similarly to KISS-ICP** on slow quadruped motion — continuous-time advantage not significant at low speeds; expected to improve on aggressive UAV motion on the Orin NX
+- **DLIO performs similarly to KISS-ICP** on slow quadruped motion, continuous-time advantage not significant at low speeds; expected to improve on aggressive UAV motion on the Orin NX
 - **GLIM's advantage is environment-dependent**: significant indoors with loop closure, marginal outdoors on CPU
 
 ## Trajectory plots
@@ -65,10 +65,10 @@ See [`data/README.md`](data/README.md) for download and conversion steps.
 
 ## Methods
 
-- **[KISS-ICP](https://github.com/PRBonn/kiss-icp)** — LiDAR-only odometry. Robust baseline.
-- **[DLIO](https://github.com/vectr-ucla/direct_lidar_inertial_odometry)** — continuous-time LiDAR-inertial odometry (ICRA 2023). 6-axis IMU compatible.
-- **[FAST-LIO2](https://github.com/Ericsii/FAST_LIO_ROS2)** — tightly-coupled LiDAR-inertial odometry (iEKF).
-- **[GLIM](https://github.com/koide3/glim)** — LiDAR-inertial SLAM with factor-graph optimization and loop closure. CPU build on dev machine; GPU on Orin NX.
+- **[KISS-ICP](https://github.com/PRBonn/kiss-icp)**, LiDAR-only odometry. Robust baseline.
+- **[DLIO](https://github.com/vectr-ucla/direct_lidar_inertial_odometry)**, continuous-time LiDAR-inertial odometry (ICRA 2023). 6-axis IMU compatible.
+- **[FAST-LIO2](https://github.com/Ericsii/FAST_LIO_ROS2)**, tightly-coupled LiDAR-inertial odometry (iEKF).
+- **[GLIM](https://github.com/koide3/glim)**, LiDAR-inertial SLAM with factor-graph optimization and loop closure. CPU build on dev machine; GPU on Orin NX.
 
 ## Methods attempted but incompatible
 

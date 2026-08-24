@@ -4,7 +4,7 @@ In addition to the offline TIERS benchmark (see [`TIERS_DATASET.md`](TIERS_DATAS
 repo evaluates the same four methods on **live recordings from an actual UAV
 platform**: a Livox Mid-360 mounted alongside a Pixhawk flight controller,
 flown inside a VICON-tracked indoor arena. Unlike the TIERS runs, all four
-methods here — including **GLIM in GPU mode** — run directly on the Jetson
+methods here, including **GLIM in GPU mode**, run directly on the Jetson
 Orin NX, the platform's actual target hardware.
 
 ## Results
@@ -24,11 +24,11 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 
 ## Key findings
 
-- **GLIM (GPU) wins decisively on every sequence** — averaging 0.040m vs 0.096-0.123m
+- **GLIM (GPU) wins decisively on every sequence**, averaging 0.040m vs 0.096-0.123m
   for the other three methods, driven by loop closure against the small, revisitable
   VICON arena, and holding up consistently across the full flight duration.
 - **KISS-ICP is the most volatile**: best-in-class on some sequences (0.043-0.098m)
-  but spikes to 0.426m on batch1_07 — LiDAR-only ICP has no inertial backstop against
+  but spikes to 0.426m on batch1_07, LiDAR-only ICP has no inertial backstop against
   faster/more aggressive drone motion.
 - **DLIO and FAST-LIO2 perform similarly** (0.096m vs 0.112m average), both far more
   consistent than KISS-ICP across sequences.
@@ -40,14 +40,14 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 | ![](docs/images/batch2_env_1.jpg) | ![](docs/images/batch2_env_2.jpg) |
 
 Indoor VICON-tracked arena with an obstacle course (rope-frame gates, cones,
-a wooden pallet, stacked boxes) — ceiling-mounted VICON cameras visible on
+a wooden pallet, stacked boxes), ceiling-mounted VICON cameras visible on
 the truss.
 
 ## Map reconstruction
 
 For each sequence: the APE error map (trajectory colored by per-pose error
 against ground truth, same style as the TIERS benchmark above) followed by
-the reconstructed point-cloud map — built by reprojecting every raw
+the reconstructed point-cloud map, built by reprojecting every raw
 `/livox/lidar` scan into world frame using that method's own estimated
 trajectory, then voxel-downsampling. Same technique regardless of method,
 so results are directly comparable. Click any thumbnail to open the
@@ -74,11 +74,11 @@ full-resolution image.
 | [<img src="docs/images/ape_maps/batch2_05_kiss_icp.png" width="180">](docs/images/ape_maps/batch2_05_kiss_icp.png) | [<img src="docs/images/ape_maps/batch2_05_fastlio2.png" width="180">](docs/images/ape_maps/batch2_05_fastlio2.png) | [<img src="docs/images/ape_maps/batch2_05_dlio.png" width="180">](docs/images/ape_maps/batch2_05_dlio.png) | [<img src="docs/images/ape_maps/batch2_05_glim.png" width="180">](docs/images/ape_maps/batch2_05_glim.png) |
 | [<img src="docs/images/maps/batch2_05_kiss_icp.png" width="180">](docs/images/maps/batch2_05_kiss_icp.png) | [<img src="docs/images/maps/batch2_05_fastlio2.png" width="180">](docs/images/maps/batch2_05_fastlio2.png) | [<img src="docs/images/maps/batch2_05_dlio.png" width="180">](docs/images/maps/batch2_05_dlio.png) | [<img src="docs/images/maps/batch2_05_glim.png" width="180">](docs/images/maps/batch2_05_glim.png) |
 
-Compare against the environment photos above — the rectangular hall outline
+Compare against the environment photos above, the rectangular hall outline
 and internal obstacle panels are recognizable in every method's reconstruction.
 
 Note: the Ericsii FAST-LIO2 ROS2 port has its per-scan PCD-accumulation code
-commented out upstream, so `pcd_save_en` never writes a file — hence the
+commented out upstream, so `pcd_save_en` never writes a file, hence the
 trajectory-reprojection approach above rather than a native map export.
 
 ## Dataset
@@ -99,7 +99,7 @@ VICON-tracked arena:
 All sequences publish `/livox/lidar` (10 Hz, same per-point timestamp fields
 as the Mid-360 TIERS data) and `/livox/imu` (200 Hz nominal).
 
-**Ground truth**: `/mavros/local_position/pose` — the Pixhawk EKF's fusion of
+**Ground truth**: `/mavros/local_position/pose`, the Pixhawk EKF's fusion of
 VICON pose with onboard IMU/barometer, ~30 Hz. An alternative topic,
 `/vicon/drone/drone/pose`, gives pure unfused VICON at ~120 Hz for
 cross-checking.
@@ -133,7 +133,7 @@ bash scripts/run_glim.sh      <bag> configs/glim/config_drone
 ## Platform
 
 Jetson Orin NX (JetPack 6.2, CUDA 12.6), Ubuntu 22.04, ROS 2 Humble,
-Livox Mid-360 + Pixhawk — GLIM runs in GPU mode.
+Livox Mid-360 + Pixhawk, GLIM runs in GPU mode.
 
 ## Author
 
