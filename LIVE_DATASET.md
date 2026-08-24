@@ -60,13 +60,13 @@ pending the trajectory-truncation fix noted above (its partial trajectory
 currently produces map artifacts, not a real reconstruction).
 
 **batch1_00**
-<img src="docs/images/batch1_00_maps_all_methods.png" width="700">
+![Maps — batch1_00](docs/images/batch1_00_maps_all_methods.png)
 
 **batch2_02**
-<img src="docs/images/batch2_02_maps_all_methods.png" width="700">
+![Maps — batch2_02](docs/images/batch2_02_maps_all_methods.png)
 
 **batch2_05**
-<img src="docs/images/batch2_05_maps_all_methods.png" width="700">
+![Maps — batch2_05](docs/images/batch2_05_maps_all_methods.png)
 
 Compare against the environment photos above — the rectangular hall outline
 and internal obstacle panels are recognizable in every method's reconstruction.
