@@ -6,7 +6,10 @@ TOPIC="${2:-/mid360/livox/lidar}"
 OUT_DIR="${3:-results/mid360}"
 mkdir -p "$OUT_DIR"
 echo ">>> KISS-ICP on $BAG topic $TOPIC"
-kiss_icp_pipeline "$BAG" --topic "$TOPIC" --max_range 60.0 --deskew --visualize=False
+# kiss-icp 1.3.x dropped --max_range/--deskew/--visualize=False CLI flags;
+# max_range is now set via this env var, deskew is on by default.
+export kiss_icp_data='{"max_range": 60.0}'
+kiss_icp_pipeline "$BAG" --topic "$TOPIC"
 echo ">>> Look under ./results/ for the output folder; copying newest *tum*:"
 LATEST=$(find results -iname "*tum*" -newermt '-2 minutes' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -n1 | cut -d' ' -f2- || true)
 if [ -n "${LATEST:-}" ]; then

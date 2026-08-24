@@ -66,8 +66,14 @@ for name in "${!datasets[@]}"; do
   for m in kiss_icp fastlio2 dlio glim; do
     f="$OUT/$m/trimmed.tum"
     if [ -f "$f" ]; then
+      # --save_plot deliberately omitted: evo's plot module unconditionally
+      # imports mpl_toolkits.mplot3d, which crashes here due to a version
+      # mismatch between pip's matplotlib and the system's mpl_toolkits
+      # (apt python3-matplotlib 3.5.1, can't be removed without breaking
+      # rqt_plot/jetsonpower-gui). Plots are generated separately from the
+      # saved --save_results zip / trimmed.tum files instead.
       evo_ape tum "$OUT/gt.tum" "$f" --align --t_max_diff $TMAXDIFF \
-        --save_results "$OUT/ape_${m}.zip" --plot_mode xy --save_plot "$OUT/ape_${m}.png" \
+        --save_results "$OUT/ape_${m}.zip" \
         || echo "!! evo_ape failed for $m on $name"
       evo_rpe tum "$OUT/gt.tum" "$f" --align --t_max_diff $TMAXDIFF \
         --save_results "$OUT/rpe_${m}.zip" \
@@ -78,7 +84,7 @@ for name in "${!datasets[@]}"; do
   done
 
   if ls "$OUT"/ape_*.zip >/dev/null 2>&1; then
-    evo_res "$OUT"/ape_*.zip --save_table "$OUT/ape_comparison.csv" --save_plot "$OUT/ape_comparison.png" \
+    evo_res "$OUT"/ape_*.zip --save_table "$OUT/ape_comparison.csv" \
       || echo "!! evo_res comparison failed for $name"
   fi
 
