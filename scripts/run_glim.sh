@@ -37,7 +37,14 @@ sleep 1
 
 echo ">>> Playing bag"
 ros2 bag play "$BAG"
-sleep 5
+
+# GLIM runs slower than real-time on this hardware, so it's still working
+# through its backlog when playback ends. A fixed sleep here silently
+# truncates the trajectory to whatever GLIM happened to reach — wait until
+# its output topic actually goes idle (no new message for 6s) instead.
+echo ">>> Waiting for GLIM to drain its processing backlog"
+python3 "$(dirname "$0")/wait_for_topic_drain.py" /glim_ros/odom_corrected \
+  --msg-type nav_msgs/msg/Odometry --idle 6 --max-wait 600
 
 kill "$REC_PID" 2>/dev/null || true
 kill "$GLIM_PID" 2>/dev/null || true
