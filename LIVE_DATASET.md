@@ -45,28 +45,33 @@ the truss.
 
 ## Map reconstruction
 
-Top-down point-cloud maps for all four methods on three representative
-sequences. Each map is built by reprojecting every raw `/livox/lidar` scan
-into world frame using that method's own estimated trajectory (TUM poses),
-then voxel-downsampling — the same technique regardless of method, so maps
-are directly comparable. Click any thumbnail to open the full-resolution image.
+For each sequence: the APE error map (trajectory colored by per-pose error
+against ground truth, same style as the TIERS benchmark above) followed by
+the reconstructed point-cloud map — built by reprojecting every raw
+`/livox/lidar` scan into world frame using that method's own estimated
+trajectory, then voxel-downsampling. Same technique regardless of method,
+so results are directly comparable. Click any thumbnail to open the
+full-resolution image.
 
 **batch1_00**
 
 | KISS-ICP | FAST-LIO2 | DLIO | GLIM |
 |:---:|:---:|:---:|:---:|
+| [<img src="docs/images/ape_maps/batch1_00_kiss_icp.png" width="180">](docs/images/ape_maps/batch1_00_kiss_icp.png) | [<img src="docs/images/ape_maps/batch1_00_fastlio2.png" width="180">](docs/images/ape_maps/batch1_00_fastlio2.png) | [<img src="docs/images/ape_maps/batch1_00_dlio.png" width="180">](docs/images/ape_maps/batch1_00_dlio.png) | [<img src="docs/images/ape_maps/batch1_00_glim.png" width="180">](docs/images/ape_maps/batch1_00_glim.png) |
 | [<img src="docs/images/maps/batch1_00_kiss_icp.png" width="180">](docs/images/maps/batch1_00_kiss_icp.png) | [<img src="docs/images/maps/batch1_00_fastlio2.png" width="180">](docs/images/maps/batch1_00_fastlio2.png) | [<img src="docs/images/maps/batch1_00_dlio.png" width="180">](docs/images/maps/batch1_00_dlio.png) | [<img src="docs/images/maps/batch1_00_glim.png" width="180">](docs/images/maps/batch1_00_glim.png) |
 
 **batch2_02**
 
 | KISS-ICP | FAST-LIO2 | DLIO | GLIM |
 |:---:|:---:|:---:|:---:|
+| [<img src="docs/images/ape_maps/batch2_02_kiss_icp.png" width="180">](docs/images/ape_maps/batch2_02_kiss_icp.png) | [<img src="docs/images/ape_maps/batch2_02_fastlio2.png" width="180">](docs/images/ape_maps/batch2_02_fastlio2.png) | [<img src="docs/images/ape_maps/batch2_02_dlio.png" width="180">](docs/images/ape_maps/batch2_02_dlio.png) | [<img src="docs/images/ape_maps/batch2_02_glim.png" width="180">](docs/images/ape_maps/batch2_02_glim.png) |
 | [<img src="docs/images/maps/batch2_02_kiss_icp.png" width="180">](docs/images/maps/batch2_02_kiss_icp.png) | [<img src="docs/images/maps/batch2_02_fastlio2.png" width="180">](docs/images/maps/batch2_02_fastlio2.png) | [<img src="docs/images/maps/batch2_02_dlio.png" width="180">](docs/images/maps/batch2_02_dlio.png) | [<img src="docs/images/maps/batch2_02_glim.png" width="180">](docs/images/maps/batch2_02_glim.png) |
 
 **batch2_05**
 
 | KISS-ICP | FAST-LIO2 | DLIO | GLIM |
 |:---:|:---:|:---:|:---:|
+| [<img src="docs/images/ape_maps/batch2_05_kiss_icp.png" width="180">](docs/images/ape_maps/batch2_05_kiss_icp.png) | [<img src="docs/images/ape_maps/batch2_05_fastlio2.png" width="180">](docs/images/ape_maps/batch2_05_fastlio2.png) | [<img src="docs/images/ape_maps/batch2_05_dlio.png" width="180">](docs/images/ape_maps/batch2_05_dlio.png) | [<img src="docs/images/ape_maps/batch2_05_glim.png" width="180">](docs/images/ape_maps/batch2_05_glim.png) |
 | [<img src="docs/images/maps/batch2_05_kiss_icp.png" width="180">](docs/images/maps/batch2_05_kiss_icp.png) | [<img src="docs/images/maps/batch2_05_fastlio2.png" width="180">](docs/images/maps/batch2_05_fastlio2.png) | [<img src="docs/images/maps/batch2_05_dlio.png" width="180">](docs/images/maps/batch2_05_dlio.png) | [<img src="docs/images/maps/batch2_05_glim.png" width="180">](docs/images/maps/batch2_05_glim.png) |
 
 Compare against the environment photos above — the rectangular hall outline

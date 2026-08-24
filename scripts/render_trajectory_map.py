@@ -67,18 +67,24 @@ def read_pointcloud2_xyz(msg, stride=4):
     return pts
 
 
-def robust_crop(pts, k=10.0, pad=1.0):
+def robust_crop(pts, cell=1.0, density_frac=0.05, pad=1.0):
     """Drop sparse far-range outlier points (e.g. reflections through
-    windows/doors) using a median/MAD bound per axis, keeping the dense
-    room-scale cluster centered instead of stretching the plot to include
-    a thin trail of stray points."""
-    keep = np.ones(len(pts), dtype=bool)
-    for axis in (0, 1):
-        vals = pts[:, axis]
-        med = np.median(vals)
-        mad = np.median(np.abs(vals - med)) + 1e-6
-        lo, hi = med - k * mad, med + k * mad
-        keep &= (vals >= lo - pad) & (vals <= hi + pad)
+    windows/doors) using a density-based bounding box: bin points into
+    `cell`-sized 2D cells, keep only cells with at least density_frac of
+    the busiest cell's count, then crop to that region's bounding box.
+    Robust to outlier trails regardless of what fraction of total points
+    they represent (unlike a plain per-axis percentile/MAD cut)."""
+    xy = pts[:, :2]
+    mins = xy.min(axis=0)
+    keys = np.floor((xy - mins) / cell).astype(np.int64)
+    uniq, inv, counts = np.unique(keys, axis=0, return_inverse=True, return_counts=True)
+    threshold = counts.max() * density_frac
+    dense_cells = uniq[counts >= threshold]
+    if len(dense_cells) == 0:
+        return pts
+    lo = dense_cells.min(axis=0) * cell + mins - pad
+    hi = (dense_cells.max(axis=0) + 1) * cell + mins + pad
+    keep = (xy[:, 0] >= lo[0]) & (xy[:, 0] <= hi[0]) & (xy[:, 1] >= lo[1]) & (xy[:, 1] <= hi[1])
     return pts[keep]
 
 
