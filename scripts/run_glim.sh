@@ -14,6 +14,13 @@ mkdir -p "$OUT_DIR"
 source /opt/ros/humble/setup.bash
 export PATH="$HOME/.local/bin:$PATH"  # pip-installed evo_traj etc.
 
+# The old ~/glim_ws build was chained as an underlay into other workspaces
+# (e.g. FAST_LIO/install/setup.bash) at build time, so sourcing them puts
+# glim_ws ahead of /opt/ros/humble in AMENT_PREFIX_PATH and `ros2 run`
+# silently resolves glim_ros to the stale CPU-only build instead of the
+# PPA GPU package. Strip it out so the PPA package always wins.
+export AMENT_PREFIX_PATH="$(echo "$AMENT_PREFIX_PATH" | tr ':' '\n' | grep -v '/glim_ws/' | paste -sd: -)"
+
 echo ">>> Launch GLIM in background (headless — standard_viewer must be disabled in config_ros.json; config_path=${CONFIG_PATH:-default})"
 if [ -n "$CONFIG_PATH" ]; then
   ros2 run glim_ros glim_rosnode --ros-args -p config_path:="$CONFIG_PATH" &

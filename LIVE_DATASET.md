@@ -44,8 +44,17 @@ the truss.
 
 ## Map reconstruction
 
-<!-- TODO: point cloud map render(s) vs. environment photo, once map export
-     is set up (FAST-LIO2's pcd_save_en output and/or GLIM's /tmp/dump map) -->
+![Map vs. environment](docs/images/batch1_00_map_vs_environment.png)
+
+FAST-LIO2's reconstructed point cloud (batch1_00, top-down view) against the
+two environment photos. The rectangular hall outline, ceiling VICON cameras,
+and internal obstacle panels are all recognizable in the reconstruction.
+
+Note: the Ericsii FAST-LIO2 ROS2 port has its per-scan PCD-accumulation code
+commented out upstream, so `pcd_save_en` never writes a file. The map here
+was captured instead from `/Laser_map` (FAST-LIO2's periodically-republished
+running map, enabled via `publish.map_en: true`), recording the topic during
+a live run and taking the final, most complete message.
 
 ## Dataset
 
