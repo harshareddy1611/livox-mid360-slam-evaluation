@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run FAST-LIO2 on Mid-360 sequence and capture TUM trajectory.
-set -euo pipefail
+set -eo pipefail  # no -u: ROS2 setup.bash references unset vars internally
 
 BAG="${1:-$HOME/Downloads/IndoorOffice1_ros2_v2}"
 CONFIG_FILE="${2:-mid360.yaml}"
@@ -10,6 +10,7 @@ OUT_DIR="${3:-results/indooroffice1/fastlio2}"
 mkdir -p "$OUT_DIR"
 
 source /opt/ros/humble/setup.bash
+export PATH="$HOME/.local/bin:$PATH"  # pip-installed evo_traj etc.
 source "$HOME/slam_ws/install/setup.bash" 2>/dev/null || true
 source "$HOME/Documents/ws_livox/install/setup.bash" 2>/dev/null || true
 source "$HOME/FAST_LIO/install/setup.bash"
@@ -30,6 +31,9 @@ sleep 3
 
 kill "$REC_PID" 2>/dev/null || true
 kill "$FASTLIO_PID" 2>/dev/null || true
+# ros2 launch spawns fastlio_mapping as a child; killing the launch wrapper
+# alone leaves it running as an orphan.
+pkill -f '[f]astlio_mapping' 2>/dev/null || true
 sleep 2
 
 echo ">>> Converting to TUM"

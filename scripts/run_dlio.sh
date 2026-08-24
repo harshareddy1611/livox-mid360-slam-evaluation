@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run DLIO on Mid-360 sequence and capture TUM trajectory.
-set -euo pipefail
+set -eo pipefail  # no -u: ROS2 setup.bash references unset vars internally
 
 BAG="${1:-$HOME/Downloads/IndoorOffice1_ros2_v2}"
 LIDAR_TOPIC="${2:-/mid360/livox/lidar}"
@@ -11,6 +11,7 @@ OUT_DIR="${4:-results/indooroffice1/dlio}"
 mkdir -p "$OUT_DIR"
 
 source /opt/ros/humble/setup.bash
+export PATH="$HOME/.local/bin:$PATH"  # pip-installed evo_traj etc.
 source "$HOME/slam_ws/install/setup.bash"
 
 echo ">>> Launch DLIO in background (lidar=$LIDAR_TOPIC imu=$IMU_TOPIC)"
@@ -33,6 +34,10 @@ sleep 3
 
 kill "$REC_PID" 2>/dev/null || true
 kill "$DLIO_PID" 2>/dev/null || true
+# ros2 launch spawns dlio_odom_node/dlio_map_node as children; killing the
+# launch wrapper alone leaves them running as orphans.
+pkill -f '[d]lio_odom_node' 2>/dev/null || true
+pkill -f '[d]lio_map_node' 2>/dev/null || true
 sleep 2
 
 echo ">>> Converting to TUM"

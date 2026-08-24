@@ -2,7 +2,7 @@
 # Run GLIM on Mid-360 sequence and capture TUM trajectory.
 # Records /glim_ros/odom_corrected (post loop-closure, globally optimized) —
 # this is GLIM's actual value-add over plain odometry, use it for evaluation.
-set -euo pipefail
+set -eo pipefail  # no -u: ROS2 setup.bash references unset vars internally
 
 BAG="${1:-$HOME/Downloads/IndoorOffice1_ros2_v2}"
 CONFIG_PATH="${2:-}"
@@ -12,6 +12,7 @@ OUT_DIR="${3:-results/indooroffice1/glim}"
 mkdir -p "$OUT_DIR"
 
 source /opt/ros/humble/setup.bash
+export PATH="$HOME/.local/bin:$PATH"  # pip-installed evo_traj etc.
 
 echo ">>> Launch GLIM in background (headless — standard_viewer must be disabled in config_ros.json; config_path=${CONFIG_PATH:-default})"
 if [ -n "$CONFIG_PATH" ]; then
@@ -33,6 +34,9 @@ sleep 5
 
 kill "$REC_PID" 2>/dev/null || true
 kill "$GLIM_PID" 2>/dev/null || true
+# ros2 run's glim_rosnode PID may not be the actual node process; make sure
+# it's actually gone before moving to the next dataset.
+pkill -f '[g]lim_rosnode' 2>/dev/null || true
 sleep 2
 
 echo ">>> Converting to TUM"
