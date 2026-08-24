@@ -30,37 +30,25 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 ## Trajectory plots
 
 ### IndoorOffice1
-| KISS-ICP | DLIO |
-|:---:|:---:|
-| ![](results/kiss_icp/ape_map.png) | ![](results/indooroffice1/dlio/ape_map_map.png) |
+| KISS-ICP | DLIO | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|:---:|
+| <img src="results/kiss_icp/ape_map.png" width="200"> | <img src="results/indooroffice1/dlio/ape_map_map.png" width="200"> | <img src="results/fastlio2/ape_map.png" width="200"> | <img src="results/glim/ape_map.png" width="200"> |
 
-| FAST-LIO2 | GLIM |
-|:---:|:---:|
-| ![](results/fastlio2/ape_map.png) | ![](results/glim/ape_map.png) |
-
-![IndoorOffice1 comparison](results/comparison/all_methods_xy_trajectories.png)
+<img src="results/comparison/all_methods_xy_trajectories_landscape.png" height="300">
 
 ### IndoorOffice2
-| KISS-ICP | DLIO |
-|:---:|:---:|
-| ![](results/indooroffice2/kiss_icp/ape_map_map.png) | ![](results/indooroffice2/dlio/ape_map_map.png) |
+| KISS-ICP | DLIO | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|:---:|
+| <img src="results/indooroffice2/kiss_icp/ape_map_map.png" width="200"> | <img src="results/indooroffice2/dlio/ape_map_map.png" width="200"> | <img src="results/indooroffice2/fastlio2/ape_map_map.png" width="200"> | <img src="results/indooroffice2/glim/ape_full_map_map.png" width="200"> |
 
-| FAST-LIO2 | GLIM |
-|:---:|:---:|
-| ![](results/indooroffice2/fastlio2/ape_map_map.png) | ![](results/indooroffice2/glim/ape_full_map_map.png) |
-
-![IndoorOffice2 comparison](results/indooroffice2/comparison_xy_trajectories.png)
+<img src="results/indooroffice2/comparison_xy_trajectories_landscape.png" height="300">
 
 ### OutdoorRoad
-| KISS-ICP | DLIO |
-|:---:|:---:|
-| ![](results/outdoorroad/kiss_icp/ape_map_map.png) | ![](results/outdoorroad/dlio/ape_map_map.png) |
+| KISS-ICP | DLIO | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|:---:|
+| <img src="results/outdoorroad/kiss_icp/ape_map_map.png" width="200"> | <img src="results/outdoorroad/dlio/ape_map_map.png" width="200"> | <img src="results/outdoorroad/fastlio2/ape_map_map.png" width="200"> | <img src="results/outdoorroad/glim/ape_map_map.png" width="200"> |
 
-| FAST-LIO2 | GLIM |
-|:---:|:---:|
-| ![](results/outdoorroad/fastlio2/ape_map_map.png) | ![](results/outdoorroad/glim/ape_map_map.png) |
-
-![OutdoorRoad comparison](results/outdoorroad/comparison_xy_trajectories.png)
+<img src="results/outdoorroad/comparison_xy_trajectories.png" height="300">
 
 ## Dataset
 
@@ -120,10 +108,16 @@ See [`docs/setup.md`](docs/setup.md) for build instructions and
 - **DLIO startup trimming:** DLIO performs a 3-second IMU calibration at node startup before processing the first scan. During this period it publishes poses at the origin (0,0,0), which artificially inflates APE RMSE (0.144m → 0.075m on IndoorOffice1 when trimmed). These zero-position startup poses are stripped before evaluation using `scripts/trim_dlio.py`. On live hardware (Orin NX), the calibration happens before the robot starts moving so this artifact does not occur.
 - DLIO publishes odometry at IMU rate (~200 Hz) vs LiDAR rate (10 Hz) for other methods.
 
+## Live Drone Dataset
+
+This repo also evaluates all four methods on live recordings from an actual
+UAV platform (Livox Mid-360 + Pixhawk, flown in a VICON-tracked arena, GLIM
+running in GPU mode on a Jetson Orin NX). See [`LIVE_DATASET.md`](LIVE_DATASET.md)
+for results, dataset details, and reproduction steps.
+
 ## Platform
 
-Dev: Ubuntu 22.04, ROS 2 Humble, x86\_64 (Intel iGPU).
-Target: Jetson Orin NX, Ubuntu 22.04, ROS 2 Humble, Livox Mid-360.
+Ubuntu 22.04, ROS 2 Humble, x86\_64 (Intel iGPU).
 
 ## Author
 

@@ -5,6 +5,7 @@ Works with modern rosbags (AnyReader API). Requires: pip install rosbags"""
 import argparse
 from pathlib import Path
 from rosbags.highlevel import AnyReader
+from rosbags.typesys import Stores, get_typestore
 
 def main():
     ap = argparse.ArgumentParser()
@@ -13,7 +14,8 @@ def main():
     ap.add_argument("--out", default="gt_tum.txt")
     args = ap.parse_args()
     n = 0
-    with AnyReader([Path(args.bag)]) as reader, open(args.out, "w") as f:
+    typestore = get_typestore(Stores.ROS2_HUMBLE)
+    with AnyReader([Path(args.bag)], default_typestore=typestore) as reader, open(args.out, "w") as f:
         conns = [c for c in reader.connections if c.topic == args.topic]
         if not conns:
             avail = sorted({c.topic for c in reader.connections})
