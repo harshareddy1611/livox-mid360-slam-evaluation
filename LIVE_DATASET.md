@@ -9,6 +9,13 @@ Orin NX, the platform's actual target hardware.
 
 ## Results
 
+> **GLIM numbers below are currently being re-verified.** GLIM runs at roughly
+> 1/3 real-time on the Orin NX for this data, and the batch script's fixed
+> post-playback wait wasn't long enough for it to finish processing each bag —
+> its trajectory output covers only ~25-40% of each flight (the calmer early
+> portion), so its APE RMSE isn't a fair comparison against the other three
+> methods yet. Rerunning with a proper drain-wait fix.
+
 APE RMSE (translation, meters) across 7 clean sequences:
 
 | Method | batch1_00 | batch1_07 | batch2_01 | batch2_02 | batch2_03 | batch2_04 | batch2_05 | Average |
@@ -44,17 +51,29 @@ the truss.
 
 ## Map reconstruction
 
-![FAST-LIO2 reconstructed map](docs/images/batch1_00_map.png)
+Top-down point-cloud maps for KISS-ICP, FAST-LIO2, and DLIO on three
+representative sequences. Each map is built by reprojecting every raw
+`/livox/lidar` scan into world frame using that method's own estimated
+trajectory (TUM poses), then voxel-downsampling — the same technique
+regardless of method, so maps are directly comparable. GLIM is omitted here
+pending the trajectory-truncation fix noted above (its partial trajectory
+currently produces map artifacts, not a real reconstruction).
 
-FAST-LIO2's reconstructed point cloud for batch1_00 (top-down view). Compare
-against the environment photos above — the rectangular hall outline and
-internal obstacle panels are both recognizable in the reconstruction.
+**batch1_00**
+![Maps — batch1_00](docs/images/batch1_00_maps_all_methods.png)
+
+**batch2_02**
+![Maps — batch2_02](docs/images/batch2_02_maps_all_methods.png)
+
+**batch2_05**
+![Maps — batch2_05](docs/images/batch2_05_maps_all_methods.png)
+
+Compare against the environment photos above — the rectangular hall outline
+and internal obstacle panels are recognizable in every method's reconstruction.
 
 Note: the Ericsii FAST-LIO2 ROS2 port has its per-scan PCD-accumulation code
-commented out upstream, so `pcd_save_en` never writes a file. The map here
-was captured instead from `/Laser_map` (FAST-LIO2's periodically-republished
-running map, enabled via `publish.map_en: true`), recording the topic during
-a live run and taking the final, most complete message.
+commented out upstream, so `pcd_save_en` never writes a file — hence the
+trajectory-reprojection approach above rather than a native map export.
 
 ## Dataset
 
