@@ -9,34 +9,36 @@ Orin NX, the platform's actual target hardware.
 
 ## Results
 
-> **GLIM numbers below are currently being re-verified.** GLIM runs at roughly
-> 1/3 real-time on the Orin NX for this data, and the batch script's fixed
-> post-playback wait wasn't long enough for it to finish processing each bag —
-> its trajectory output covers only ~25-40% of each flight (the calmer early
-> portion), so its APE RMSE isn't a fair comparison against the other three
-> methods yet. Rerunning with a proper drain-wait fix.
-
 APE RMSE (translation, meters) across 7 clean sequences:
 
 | Method | batch1_00 | batch1_07 | batch2_01 | batch2_02 | batch2_03 | batch2_04 | batch2_05 | Average |
 |--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | KISS-ICP | 0.046 | 0.426 | 0.086 | 0.067 | 0.043 | 0.094 | 0.098 | 0.123 |
-| DLIO | 0.083 | 0.111 | 0.087 | 0.099 | 0.096 | 0.089 | 0.099 | 0.095 |
-| FAST-LIO2 | 0.086 | 0.177 | 0.111 | 0.087 | 0.081 | 0.131 | 0.137 | 0.116 |
-| **GLIM (GPU)** | **0.030** | **0.031** | **0.056** | **0.056** | **0.023** | **0.036** | **0.040** | **0.039** |
+| DLIO | 0.089 | 0.110 | 0.086 | 0.100 | 0.096 | 0.090 | 0.104 | 0.096 |
+| FAST-LIO2 | 0.084 | 0.180 | 0.095 | 0.085 | 0.078 | 0.134 | 0.127 | 0.112 |
+| **GLIM (GPU)** | **0.038** | **0.035** | **0.059** | **0.043** | **0.024** | **0.035** | **0.046** | **0.040** |
 
 Ground truth: Pixhawk EKF pose (`/mavros/local_position/pose`, VICON-fused).
 SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 
+> **Note on GLIM evaluation:** an earlier version of this table used GLIM
+> trajectories that were silently truncated to ~25-40% of each flight (GLIM
+> runs slower than real-time on the Orin NX for this data, and the batch
+> script's fixed post-playback wait killed it before it finished draining its
+> backlog). Fixed by waiting for its output topic to go idle instead of a
+> fixed sleep — GLIM's trajectories now cover 96-98% of each bag. Its RMSE
+> barely changed (0.039m truncated vs 0.040m full), showing its loop-closure
+> consistency holds across the entire flight, not just an easier early segment.
+
 ## Key findings
 
-- **GLIM (GPU) wins decisively on every sequence** — averaging 0.039m vs 0.095-0.123m
+- **GLIM (GPU) wins decisively on every sequence** — averaging 0.040m vs 0.096-0.123m
   for the other three methods, driven by loop closure against the small, revisitable
-  VICON arena.
+  VICON arena, and holding up consistently across the full flight duration.
 - **KISS-ICP is the most volatile**: best-in-class on some sequences (0.043-0.098m)
   but spikes to 0.426m on batch1_07 — LiDAR-only ICP has no inertial backstop against
   faster/more aggressive drone motion.
-- **DLIO and FAST-LIO2 perform similarly** (0.095m vs 0.116m average), both far more
+- **DLIO and FAST-LIO2 perform similarly** (0.096m vs 0.112m average), both far more
   consistent than KISS-ICP across sequences.
 
 ## Environment
@@ -51,22 +53,29 @@ the truss.
 
 ## Map reconstruction
 
-Top-down point-cloud maps for KISS-ICP, FAST-LIO2, and DLIO on three
-representative sequences. Each map is built by reprojecting every raw
-`/livox/lidar` scan into world frame using that method's own estimated
-trajectory (TUM poses), then voxel-downsampling — the same technique
-regardless of method, so maps are directly comparable. GLIM is omitted here
-pending the trajectory-truncation fix noted above (its partial trajectory
-currently produces map artifacts, not a real reconstruction).
+Top-down point-cloud maps for all four methods on three representative
+sequences. Each map is built by reprojecting every raw `/livox/lidar` scan
+into world frame using that method's own estimated trajectory (TUM poses),
+then voxel-downsampling — the same technique regardless of method, so maps
+are directly comparable. Click any thumbnail to open the full-resolution image.
 
 **batch1_00**
-![Maps — batch1_00](docs/images/batch1_00_maps_all_methods.png)
+
+| KISS-ICP | FAST-LIO2 | DLIO | GLIM |
+|:---:|:---:|:---:|:---:|
+| [<img src="docs/images/maps/batch1_00_kiss_icp.png" width="180">](docs/images/maps/batch1_00_kiss_icp.png) | [<img src="docs/images/maps/batch1_00_fastlio2.png" width="180">](docs/images/maps/batch1_00_fastlio2.png) | [<img src="docs/images/maps/batch1_00_dlio.png" width="180">](docs/images/maps/batch1_00_dlio.png) | [<img src="docs/images/maps/batch1_00_glim.png" width="180">](docs/images/maps/batch1_00_glim.png) |
 
 **batch2_02**
-![Maps — batch2_02](docs/images/batch2_02_maps_all_methods.png)
+
+| KISS-ICP | FAST-LIO2 | DLIO | GLIM |
+|:---:|:---:|:---:|:---:|
+| [<img src="docs/images/maps/batch2_02_kiss_icp.png" width="180">](docs/images/maps/batch2_02_kiss_icp.png) | [<img src="docs/images/maps/batch2_02_fastlio2.png" width="180">](docs/images/maps/batch2_02_fastlio2.png) | [<img src="docs/images/maps/batch2_02_dlio.png" width="180">](docs/images/maps/batch2_02_dlio.png) | [<img src="docs/images/maps/batch2_02_glim.png" width="180">](docs/images/maps/batch2_02_glim.png) |
 
 **batch2_05**
-![Maps — batch2_05](docs/images/batch2_05_maps_all_methods.png)
+
+| KISS-ICP | FAST-LIO2 | DLIO | GLIM |
+|:---:|:---:|:---:|:---:|
+| [<img src="docs/images/maps/batch2_05_kiss_icp.png" width="180">](docs/images/maps/batch2_05_kiss_icp.png) | [<img src="docs/images/maps/batch2_05_fastlio2.png" width="180">](docs/images/maps/batch2_05_fastlio2.png) | [<img src="docs/images/maps/batch2_05_dlio.png" width="180">](docs/images/maps/batch2_05_dlio.png) | [<img src="docs/images/maps/batch2_05_glim.png" width="180">](docs/images/maps/batch2_05_glim.png) |
 
 Compare against the environment photos above — the rectangular hall outline
 and internal obstacle panels are recognizable in every method's reconstruction.

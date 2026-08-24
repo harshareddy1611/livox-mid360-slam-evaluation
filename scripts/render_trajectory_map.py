@@ -67,6 +67,21 @@ def read_pointcloud2_xyz(msg, stride=4):
     return pts
 
 
+def robust_crop(pts, k=10.0, pad=1.0):
+    """Drop sparse far-range outlier points (e.g. reflections through
+    windows/doors) using a median/MAD bound per axis, keeping the dense
+    room-scale cluster centered instead of stretching the plot to include
+    a thin trail of stray points."""
+    keep = np.ones(len(pts), dtype=bool)
+    for axis in (0, 1):
+        vals = pts[:, axis]
+        med = np.median(vals)
+        mad = np.median(np.abs(vals - med)) + 1e-6
+        lo, hi = med - k * mad, med + k * mad
+        keep &= (vals >= lo - pad) & (vals <= hi + pad)
+    return pts[keep]
+
+
 def voxel_downsample(pts, voxel_size):
     if len(pts) == 0:
         return pts
@@ -119,6 +134,7 @@ def main():
 
     pts = np.concatenate(all_pts, axis=0)
     pts = voxel_downsample(pts, args.voxel)
+    pts = robust_crop(pts)
     print(f"scans={n_scans} final_points={len(pts)}")
 
     import matplotlib
@@ -131,6 +147,11 @@ def main():
     ax.set_ylabel('Y (m)')
     ax.set_title(args.title or Path(args.bag).name)
     ax.set_aspect('equal')
+    # Center the view on the data with a small margin, instead of letting
+    # matplotlib autoscale to include any remaining sparse stray points.
+    margin = 0.5
+    ax.set_xlim(pts[:, 0].min() - margin, pts[:, 0].max() + margin)
+    ax.set_ylim(pts[:, 1].min() - margin, pts[:, 1].max() + margin)
     plt.colorbar(sc, label='Height (m)', shrink=0.8)
     plt.tight_layout()
     plt.savefig(args.out_png, dpi=140, facecolor='white')
