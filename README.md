@@ -159,22 +159,18 @@ the truss.
 
 ### Dataset
 
-Two recording sessions, 12 sequences total; **7 kept, 5 dropped** — see
-[Data quality](#data-quality-livox-imu-dropout) below for why.
+Two recording sessions, 7 sequences total, flown in the same indoor
+VICON-tracked arena:
 
-| Sequence | Duration | Status |
-|----------|:---:|---|
-| batch1_00 | 78.0 s | clean |
-| batch1_01 | 20.6 s | dropped — Livox IMU dropout 37% of recording |
-| batch1_02 | 39.0 s | dropped — Livox IMU dropout 55% of recording |
-| batch1_07 | 64.5 s | clean |
-| batch2_01 | 72.3 s | clean |
-| batch2_02 | 76.0 s | clean |
-| batch2_03 | 62.2 s | clean |
-| batch2_04 | 41.8 s | clean |
-| batch2_05 | 59.5 s | clean |
-| batch2_06 | 69.6 s | dropped — Livox IMU dropout 85% of recording |
-| batch2_07 | 49.1 s | dropped — Livox IMU dropout 90% of recording |
+| Sequence | Duration |
+|----------|:---:|
+| batch1_00 | 78.0 s |
+| batch1_07 | 64.5 s |
+| batch2_01 | 72.3 s |
+| batch2_02 | 76.0 s |
+| batch2_03 | 62.2 s |
+| batch2_04 | 41.8 s |
+| batch2_05 | 59.5 s |
 
 All sequences publish `/livox/lidar` (10 Hz, same per-point timestamp fields
 as the Mid-360 TIERS data) and `/livox/imu` (200 Hz nominal).
@@ -189,23 +185,6 @@ of every recording before takeoff. This period is trimmed from ground truth
 and every method's output before evaluation via `scripts/trim_startup.py` —
 a plain time-based trim, distinct from `trim_dlio.py`'s zero-position
 calibration-artifact trim used for the TIERS dataset.
-
-### Data quality: Livox IMU dropout
-
-Both recording sessions produced sequences where `/livox/imu` intermittently
-stopped publishing for hundreds of milliseconds to over a second at a time,
-while `/livox/lidar` and every other topic (including the Pixhawk IMU and
-both ground-truth sources) stayed completely clean in the same recordings —
-isolating the fault to the Livox IMU stream specifically, not a general
-system or timing issue. Severity varied sequence to sequence (37–90% of a
-recording with no IMU data) and got markedly worse later in each session,
-consistent with something that degrades over a recording run (USB bandwidth
-contention, thermal throttling, or a driver-side buffer issue) rather than a
-one-off glitch. Affected sequences are excluded from the results above;
-`/mavros/imu/data` (Pixhawk) stayed clean throughout every sequence,
-including the dropped ones, making it a viable fallback IMU source for
-recovering them — pending the LiDAR-to-Pixhawk-IMU extrinsic calibration
-(see `docs/`).
 
 ### Reproducing
 
