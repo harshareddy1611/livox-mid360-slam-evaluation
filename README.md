@@ -33,6 +33,35 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 - **DLIO and FAST-LIO2 perform similarly** (0.096m vs 0.112m average), both far more
   consistent than KISS-ICP across sequences.
 
+## Dataset
+
+Two recording sessions, 7 sequences total, flown in the same indoor
+VICON-tracked arena:
+
+| Sequence | Duration |
+|----------|:---:|
+| batch1_00 | 78.0 s |
+| batch1_07 | 64.5 s |
+| batch2_01 | 72.3 s |
+| batch2_02 | 76.0 s |
+| batch2_03 | 62.2 s |
+| batch2_04 | 41.8 s |
+| batch2_05 | 59.5 s |
+
+All sequences publish `/livox/lidar` (10 Hz, same per-point timestamp fields
+as the Mid-360 TIERS data) and `/livox/imu` (200 Hz nominal).
+
+**Ground truth**: `/mavros/local_position/pose`, the Pixhawk EKF's fusion of
+VICON pose with onboard IMU/barometer, ~30 Hz. An alternative topic,
+`/vicon/drone/drone/pose`, gives pure unfused VICON at ~120 Hz for
+cross-checking.
+
+**Startup trim**: the drone sat stationary on the ground for the first ~3.5s
+of every recording before takeoff. This period is trimmed from ground truth
+and every method's output before evaluation via `scripts/trim_startup.py`,
+a plain time-based trim, distinct from `trim_dlio.py`'s zero-position
+calibration-artifact trim used for the TIERS dataset.
+
 ## Environment
 
 | | |
@@ -80,35 +109,6 @@ and internal obstacle panels are recognizable in every method's reconstruction.
 Note: the Ericsii FAST-LIO2 ROS2 port has its per-scan PCD-accumulation code
 commented out upstream, so `pcd_save_en` never writes a file, hence the
 trajectory-reprojection approach above rather than a native map export.
-
-## Dataset
-
-Two recording sessions, 7 sequences total, flown in the same indoor
-VICON-tracked arena:
-
-| Sequence | Duration |
-|----------|:---:|
-| batch1_00 | 78.0 s |
-| batch1_07 | 64.5 s |
-| batch2_01 | 72.3 s |
-| batch2_02 | 76.0 s |
-| batch2_03 | 62.2 s |
-| batch2_04 | 41.8 s |
-| batch2_05 | 59.5 s |
-
-All sequences publish `/livox/lidar` (10 Hz, same per-point timestamp fields
-as the Mid-360 TIERS data) and `/livox/imu` (200 Hz nominal).
-
-**Ground truth**: `/mavros/local_position/pose`, the Pixhawk EKF's fusion of
-VICON pose with onboard IMU/barometer, ~30 Hz. An alternative topic,
-`/vicon/drone/drone/pose`, gives pure unfused VICON at ~120 Hz for
-cross-checking.
-
-**Startup trim**: the drone sat stationary on the ground for the first ~3.5s
-of every recording before takeoff. This period is trimmed from ground truth
-and every method's output before evaluation via `scripts/trim_startup.py` —
-a plain time-based trim, distinct from `trim_dlio.py`'s zero-position
-calibration-artifact trim used for the TIERS dataset.
 
 ## Reproducing
 
