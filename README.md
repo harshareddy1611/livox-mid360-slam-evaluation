@@ -30,37 +30,25 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 ## Trajectory plots
 
 ### IndoorOffice1
-| KISS-ICP | DLIO |
-|:---:|:---:|
-| ![](results/kiss_icp/ape_map.png) | ![](results/indooroffice1/dlio/ape_map_map.png) |
+| KISS-ICP | DLIO | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|:---:|
+| <img src="results/kiss_icp/ape_map.png" width="200"> | <img src="results/indooroffice1/dlio/ape_map_map.png" width="200"> | <img src="results/fastlio2/ape_map.png" width="200"> | <img src="results/glim/ape_map.png" width="200"> |
 
-| FAST-LIO2 | GLIM |
-|:---:|:---:|
-| ![](results/fastlio2/ape_map.png) | ![](results/glim/ape_map.png) |
-
-![IndoorOffice1 comparison](results/comparison/all_methods_xy_trajectories.png)
+<img src="results/comparison/all_methods_xy_trajectories.png" width="500">
 
 ### IndoorOffice2
-| KISS-ICP | DLIO |
-|:---:|:---:|
-| ![](results/indooroffice2/kiss_icp/ape_map_map.png) | ![](results/indooroffice2/dlio/ape_map_map.png) |
+| KISS-ICP | DLIO | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|:---:|
+| <img src="results/indooroffice2/kiss_icp/ape_map_map.png" width="200"> | <img src="results/indooroffice2/dlio/ape_map_map.png" width="200"> | <img src="results/indooroffice2/fastlio2/ape_map_map.png" width="200"> | <img src="results/indooroffice2/glim/ape_full_map_map.png" width="200"> |
 
-| FAST-LIO2 | GLIM |
-|:---:|:---:|
-| ![](results/indooroffice2/fastlio2/ape_map_map.png) | ![](results/indooroffice2/glim/ape_full_map_map.png) |
-
-![IndoorOffice2 comparison](results/indooroffice2/comparison_xy_trajectories.png)
+<img src="results/indooroffice2/comparison_xy_trajectories.png" width="500">
 
 ### OutdoorRoad
-| KISS-ICP | DLIO |
-|:---:|:---:|
-| ![](results/outdoorroad/kiss_icp/ape_map_map.png) | ![](results/outdoorroad/dlio/ape_map_map.png) |
+| KISS-ICP | DLIO | FAST-LIO2 | GLIM |
+|:---:|:---:|:---:|:---:|
+| <img src="results/outdoorroad/kiss_icp/ape_map_map.png" width="200"> | <img src="results/outdoorroad/dlio/ape_map_map.png" width="200"> | <img src="results/outdoorroad/fastlio2/ape_map_map.png" width="200"> | <img src="results/outdoorroad/glim/ape_map_map.png" width="200"> |
 
-| FAST-LIO2 | GLIM |
-|:---:|:---:|
-| ![](results/outdoorroad/fastlio2/ape_map_map.png) | ![](results/outdoorroad/glim/ape_map_map.png) |
-
-![OutdoorRoad comparison](results/outdoorroad/comparison_xy_trajectories.png)
+<img src="results/outdoorroad/comparison_xy_trajectories.png" width="500">
 
 ## Dataset
 
