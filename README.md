@@ -34,14 +34,14 @@ SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 |:---:|:---:|:---:|:---:|
 | <img src="results/kiss_icp/ape_map.png" width="200"> | <img src="results/indooroffice1/dlio/ape_map_map.png" width="200"> | <img src="results/fastlio2/ape_map.png" width="200"> | <img src="results/glim/ape_map.png" width="200"> |
 
-<img src="results/comparison/all_methods_xy_trajectories.png" height="300">
+<img src="results/comparison/all_methods_xy_trajectories_landscape.png" height="300">
 
 ### IndoorOffice2
 | KISS-ICP | DLIO | FAST-LIO2 | GLIM |
 |:---:|:---:|:---:|:---:|
 | <img src="results/indooroffice2/kiss_icp/ape_map_map.png" width="200"> | <img src="results/indooroffice2/dlio/ape_map_map.png" width="200"> | <img src="results/indooroffice2/fastlio2/ape_map_map.png" width="200"> | <img src="results/indooroffice2/glim/ape_full_map_map.png" width="200"> |
 
-<img src="results/indooroffice2/comparison_xy_trajectories.png" height="300">
+<img src="results/indooroffice2/comparison_xy_trajectories_landscape.png" height="300">
 
 ### OutdoorRoad
 | KISS-ICP | DLIO | FAST-LIO2 | GLIM |
