@@ -21,14 +21,6 @@ APE RMSE (translation, meters) across 7 clean sequences:
 Ground truth: Pixhawk EKF pose (`/mavros/local_position/pose`, VICON-fused).
 SE(3) Umeyama alignment via [evo](https://github.com/MichaelGrupp/evo).
 
-> **Note on GLIM evaluation:** an earlier version of this table used GLIM
-> trajectories that were silently truncated to ~25-40% of each flight (GLIM
-> runs slower than real-time on the Orin NX for this data, and the batch
-> script's fixed post-playback wait killed it before it finished draining its
-> backlog). Fixed by waiting for its output topic to go idle instead of a
-> fixed sleep — GLIM's trajectories now cover 96-98% of each bag. Its RMSE
-> barely changed (0.039m truncated vs 0.040m full), showing its loop-closure
-> consistency holds across the entire flight, not just an easier early segment.
 
 ## Key findings
 
